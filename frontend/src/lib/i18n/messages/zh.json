@@ -1408,7 +1408,7 @@
     "disabledHint": "请让店主或经理在设置中重新启用桌边点单。",
     "disabledTitle": "服务员应用已禁用",
     "draftTotal": "草稿合计",
-    "emailPlaceholder": "server@flo.local",
+    "emailPlaceholder": "账号或姓名",
     "emptyDraft": "点按菜单商品将其添加到这里。",
     "guestFallbackName": "客人 {last4}",
     "itemNotePlaceholder": "商品备注",

@@ -491,7 +491,7 @@ export default function ServerStandalonePage() {
             <p className="mt-1 text-sm text-muted-foreground">{t('loginSubtitle')}</p>
           </div>
           <div className="space-y-3">
-            <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" dir="ltr" placeholder={t('emailPlaceholder')} required className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20" />
+            <input value={email} onChange={(event) => setEmail(event.target.value)} type="text" dir="ltr" placeholder={t('emailPlaceholder')} required className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20" />
             <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder={tAuth('password')} required className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20" />
             <label className="flex items-center gap-2 text-sm text-muted-foreground">
               <input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} className="rounded border-border text-brand focus:ring-brand" />
