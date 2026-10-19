@@ -59,7 +59,8 @@ orderLinkRoutes.post('/orders', (req, res) => {
     if (itemList.length === 0) {
       return res.status(400).json({ error: '请先点菜' });
     }
-    const count = Math.max(1, Math.min(30, Number(guest_count) || 1));
+    const maxGuests = Math.max(1, Number((table as any).capacity) || 30);
+    const count = Math.max(1, Math.min(maxGuests, Number(guest_count) || 1));
 
     const owner = db.prepare("SELECT id FROM users WHERE role = 'owner' AND is_active = 1 ORDER BY created_at LIMIT 1").get() as any;
 

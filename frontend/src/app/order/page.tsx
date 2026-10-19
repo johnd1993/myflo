@@ -71,6 +71,9 @@ export default function CustomerOrderPage() {
       .filter((x): x is CartLine => !!x);
   }, [cart, menu]);
 
+  // 桌台容量上限（从桌台设置读取，默认 8）
+  const maxGuests = Math.max(1, Number(menu?.table?.capacity) || 8);
+
   const cartTotal = cartLines.reduce((s, l) => s + l.product.price * l.qty, 0);
   const cartCount = cartLines.reduce((s, l) => s + l.qty, 0);
 
@@ -136,8 +139,8 @@ export default function CustomerOrderPage() {
             <span className="text-5xl font-bold w-20 text-center">{guestCount}</span>
             <button
               className="w-14 h-14 rounded-full bg-orange-500 text-white shadow text-2xl font-bold disabled:opacity-30"
-              disabled={guestCount >= 30}
-              onClick={() => setGuestCount((c) => Math.min(30, c + 1))}
+              disabled={guestCount >= maxGuests}
+              onClick={() => setGuestCount((c) => Math.min(maxGuests, c + 1))}
             >+</button>
           </div>
           <button
