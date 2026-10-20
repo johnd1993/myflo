@@ -96,6 +96,8 @@ const LABEL_FIELD_KEYS = {
 interface MerchantBlockSpec {
   kind: string;
   visible?: boolean;
+  align?: 'left' | 'center' | 'right';
+  size?: 'normal' | 'double';
   labels?: Record<string, string>;
 }
 
@@ -146,6 +148,8 @@ function cleanPayload(payload: TemplatePayload): TemplatePayload {
     blocks: payload.blocks.map((block) => {
       const next: MerchantBlockSpec = { kind: block.kind };
       if (block.visible === false) next.visible = false;
+      if (block.align) next.align = block.align;
+      if (block.size) next.size = block.size;
       const labels = block.labels
         ? Object.fromEntries(
             Object.entries(block.labels).filter(([, value]) => value !== undefined && value !== ''),
@@ -359,6 +363,22 @@ export function PrintTemplatesTab() {
     setDraftPayload({ ...draftPayload, blocks });
   };
 
+  const setBlockAlign = (index: number, align: 'left' | 'center' | 'right') => {
+    if (!draftPayload) return;
+    const blocks = draftPayload.blocks.map((block, i) =>
+      i === index ? { ...block, align } : block,
+    );
+    setDraftPayload({ ...draftPayload, blocks });
+  };
+
+  const setBlockSize = (index: number, size: 'normal' | 'double') => {
+    if (!draftPayload) return;
+    const blocks = draftPayload.blocks.map((block, i) =>
+      i === index ? { ...block, size } : block,
+    );
+    setDraftPayload({ ...draftPayload, blocks });
+  };
+
   const setBlockLabel = (index: number, field: string, value: string) => {
     if (!draftPayload) return;
     const blocks = draftPayload.blocks.map((block, i) => {
@@ -378,36 +398,41 @@ export function PrintTemplatesTab() {
     const renderBlocks: React.ReactNode[] = [];
     for (const block of blocks) {
       const labels = block.labels;
+      const align = block.align ?? 'left';
+      const size = block.size ?? 'normal';
+      const wrapperStyle: React.CSSProperties = {
+        textAlign: align,
+        fontSize: size === 'double' ? '1.15em' : undefined,
+      };
+      let inner: React.ReactNode = null;
       switch (block.kind) {
         case 'business-header': {
-          renderBlocks.push(
-            <div key={block.kind} className="text-center space-y-0.5">
+          inner = (
+            <div className="space-y-0.5">
               <p className="text-base font-extrabold tracking-wide">{PREVIEW_DATA.businessName}</p>
-            </div>,
+            </div>
           );
           break;
         }
         case 'document-meta': {
-          renderBlocks.push(
-            <div key={block.kind} className="text-center space-y-0.5">
+          inner = (
+            <div className="space-y-0.5">
               <p className="text-sm font-bold">{previewLabel(labels, 'title', PREVIEW_DATA.docTitle)}</p>
               <p className="text-xs opacity-70">{previewLabel(labels, 'invoiceNumber', PREVIEW_DATA.orderNumber)}</p>
-            </div>,
+            </div>
           );
           break;
         }
         case 'customer': {
-          renderBlocks.push(
-            <p key={block.kind} className="text-xs">{t('customerLabel')} {PREVIEW_DATA.customerName}</p>,
-          );
+          inner = <p className="text-xs">{t('customerLabel')} {PREVIEW_DATA.customerName}</p>;
           break;
         }
         case 'item-table': {
           const itemCol = previewLabel(labels, 'item', t('itemCol'));
           const qtyCol = previewLabel(labels, 'quantity', t('qtyCol'));
           const amtCol = previewLabel(labels, 'amount', t('amountCol'));
-          renderBlocks.push(
-            <div key={block.kind} className="space-y-1">
+          inner = (
+            <div className="space-y-1">
               <div className="flex justify-between text-[11px] opacity-60 border-b border-dashed pb-0.5">
                 <span className="flex-1">{itemCol}</span>
                 <span className="w-10 text-center">{qtyCol}</span>
@@ -423,16 +448,16 @@ export function PrintTemplatesTab() {
               {labels?.note && labels.note.trim() !== '' && (
                 <p className="text-[11px] opacity-70">{labels.note}</p>
               )}
-            </div>,
+            </div>
           );
           break;
         }
         case 'tax-breakdown': {
-          renderBlocks.push(
-            <div key={block.kind} className="flex justify-between text-xs">
+          inner = (
+            <div className="flex justify-between text-xs">
               <span>{t('taxCol')}</span>
               <span>¥{PREVIEW_DATA.tax.toFixed(2)}</span>
-            </div>,
+            </div>
           );
           break;
         }
@@ -440,8 +465,8 @@ export function PrintTemplatesTab() {
           const subLabel = previewLabel(labels, 'subtotal', t('subtotalCol'));
           const discLabel = previewLabel(labels, 'discount', t('discountCol'));
           const totalLabel = previewLabel(labels, 'grandTotal', t('totalCol'));
-          renderBlocks.push(
-            <div key={block.kind} className="space-y-0.5">
+          inner = (
+            <div className="space-y-0.5">
               <div className="flex justify-between text-xs">
                 <span>{subLabel}</span>
                 <span>¥{PREVIEW_DATA.subtotal.toFixed(2)}</span>
@@ -454,32 +479,37 @@ export function PrintTemplatesTab() {
                 <span>{totalLabel}</span>
                 <span>¥{PREVIEW_DATA.grandTotal.toFixed(2)}</span>
               </div>
-            </div>,
+            </div>
           );
           break;
         }
         case 'payments': {
-          renderBlocks.push(
-            <div key={block.kind} className="flex justify-between text-xs">
+          inner = (
+            <div className="flex justify-between text-xs">
               <span>{PREVIEW_DATA.payment}</span>
               <span>¥{PREVIEW_DATA.paidAmount.toFixed(2)}</span>
-            </div>,
+            </div>
           );
           break;
         }
         case 'message': {
           const thankYou = previewLabel(labels, 'thankYou', t('thankYouLabel'));
           const reprint = previewLabel(labels, 'reprintBanner', '');
-          renderBlocks.push(
-            <div key={block.kind} className="text-center space-y-0.5">
+          inner = (
+            <div className="space-y-0.5">
               {reprint.trim() !== '' && <p className="text-xs font-bold opacity-70">{reprint}</p>}
               <p className="text-xs">{thankYou}</p>
-            </div>,
+            </div>
           );
           break;
         }
         default:
           break;
+      }
+      if (inner) {
+        renderBlocks.push(
+          <div key={block.kind} style={wrapperStyle}>{inner}</div>,
+        );
       }
     }
     return (
@@ -604,6 +634,34 @@ export function PrintTemplatesTab() {
                       <ArrowDown size={15} />
                     </button>
                     <Toggle value={visible} onChange={() => toggleBlockVisible(index)} label={t('blockVisible')} />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs text-muted-foreground">对齐</span>
+                  <div className="flex gap-1">
+                    {(['left', 'center', 'right'] as const).map((a) => (
+                      <button
+                        key={a}
+                        type="button"
+                        onClick={() => setBlockAlign(index, a)}
+                        className={`px-2 py-0.5 rounded text-xs ${(block.align ?? 'left') === a ? 'bg-brand text-white' : 'bg-muted text-muted-foreground'}`}
+                      >
+                        {a === 'left' ? '左' : a === 'center' ? '中' : '右'}
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-xs text-muted-foreground ml-2">字号</span>
+                  <div className="flex gap-1">
+                    {(['normal', 'double'] as const).map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => setBlockSize(index, s)}
+                        className={`px-2 py-0.5 rounded text-xs ${(block.size ?? 'normal') === s ? 'bg-brand text-white' : 'bg-muted text-muted-foreground'}`}
+                      >
+                        {s === 'normal' ? '标准' : '双倍'}
+                      </button>
+                    ))}
                   </div>
                 </div>
                 {labelFields.length > 0 && (
