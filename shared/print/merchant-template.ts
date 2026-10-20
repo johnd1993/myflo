@@ -350,7 +350,7 @@ export function validateMerchantTemplate(value: unknown): MerchantTemplateValida
         reject(errors, `${at}: each block entry must be a JSON object`);
         return;
       }
-      const allowedBlockFields = ['kind', 'visible', 'labels'];
+      const allowedBlockFields = ['kind', 'visible', 'labels', 'align', 'size'];
       for (const key of Object.keys(entry)) {
         if (!allowedBlockFields.includes(key)) {
           reject(errors, `${at}: unknown field "${key}" (allowed: ${allowedBlockFields.join(', ')})`);
