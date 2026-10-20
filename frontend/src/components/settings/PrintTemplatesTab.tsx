@@ -402,14 +402,14 @@ export function PrintTemplatesTab() {
       const size = block.size ?? 'normal';
       const wrapperStyle: React.CSSProperties = {
         textAlign: align,
-        fontSize: size === 'double' ? '1.15em' : undefined,
+        fontSize: size === 'double' ? '1.4em' : undefined,
       };
       let inner: React.ReactNode = null;
       switch (block.kind) {
         case 'business-header': {
           inner = (
             <div className="space-y-0.5">
-              <p className="text-base font-extrabold tracking-wide">{PREVIEW_DATA.businessName}</p>
+              <p className="font-extrabold tracking-wide">{PREVIEW_DATA.businessName}</p>
             </div>
           );
           break;
@@ -417,14 +417,14 @@ export function PrintTemplatesTab() {
         case 'document-meta': {
           inner = (
             <div className="space-y-0.5">
-              <p className="text-sm font-bold">{previewLabel(labels, 'title', PREVIEW_DATA.docTitle)}</p>
-              <p className="text-xs opacity-70">{previewLabel(labels, 'invoiceNumber', PREVIEW_DATA.orderNumber)}</p>
+              <p className="font-bold">{previewLabel(labels, 'title', PREVIEW_DATA.docTitle)}</p>
+              <p className="opacity-70">{previewLabel(labels, 'invoiceNumber', PREVIEW_DATA.orderNumber)}</p>
             </div>
           );
           break;
         }
         case 'customer': {
-          inner = <p className="text-xs">{t('customerLabel')} {PREVIEW_DATA.customerName}</p>;
+          inner = <p>{t('customerLabel')} {PREVIEW_DATA.customerName}</p>;
           break;
         }
         case 'item-table': {
@@ -433,20 +433,20 @@ export function PrintTemplatesTab() {
           const amtCol = previewLabel(labels, 'amount', t('amountCol'));
           inner = (
             <div className="space-y-1">
-              <div className="flex justify-between text-[11px] opacity-60 border-b border-dashed pb-0.5">
+              <div className="flex justify-between opacity-60 border-b border-dashed pb-0.5">
                 <span className="flex-1">{itemCol}</span>
                 <span className="w-10 text-center">{qtyCol}</span>
                 <span className="w-16 text-right">{amtCol}</span>
               </div>
               {PREVIEW_DATA.items.map((item) => (
-                <div key={item.name} className="flex justify-between text-xs">
+                <div key={item.name} className="flex justify-between">
                   <span className="flex-1 pr-2">{item.name}</span>
                   <span className="w-10 text-center">{item.quantity}</span>
                   <span className="w-16 text-right">¥{item.amount.toFixed(2)}</span>
                 </div>
               ))}
               {labels?.note && labels.note.trim() !== '' && (
-                <p className="text-[11px] opacity-70">{labels.note}</p>
+                <p className="opacity-70">{labels.note}</p>
               )}
             </div>
           );
@@ -454,7 +454,7 @@ export function PrintTemplatesTab() {
         }
         case 'tax-breakdown': {
           inner = (
-            <div className="flex justify-between text-xs">
+            <div className="flex justify-between">
               <span>{t('taxCol')}</span>
               <span>¥{PREVIEW_DATA.tax.toFixed(2)}</span>
             </div>
@@ -467,15 +467,15 @@ export function PrintTemplatesTab() {
           const totalLabel = previewLabel(labels, 'grandTotal', t('totalCol'));
           inner = (
             <div className="space-y-0.5">
-              <div className="flex justify-between text-xs">
+              <div className="flex justify-between">
                 <span>{subLabel}</span>
                 <span>¥{PREVIEW_DATA.subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-xs">
+              <div className="flex justify-between">
                 <span>{discLabel}</span>
                 <span>¥{PREVIEW_DATA.discount.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold border-t border-dashed pt-0.5">
+              <div className="flex justify-between font-bold border-t border-dashed pt-0.5">
                 <span>{totalLabel}</span>
                 <span>¥{PREVIEW_DATA.grandTotal.toFixed(2)}</span>
               </div>
@@ -485,7 +485,7 @@ export function PrintTemplatesTab() {
         }
         case 'payments': {
           inner = (
-            <div className="flex justify-between text-xs">
+            <div className="flex justify-between">
               <span>{PREVIEW_DATA.payment}</span>
               <span>¥{PREVIEW_DATA.paidAmount.toFixed(2)}</span>
             </div>
@@ -497,8 +497,8 @@ export function PrintTemplatesTab() {
           const reprint = previewLabel(labels, 'reprintBanner', '');
           inner = (
             <div className="space-y-0.5">
-              {reprint.trim() !== '' && <p className="text-xs font-bold opacity-70">{reprint}</p>}
-              <p className="text-xs">{thankYou}</p>
+              {reprint.trim() !== '' && <p className="font-bold opacity-70">{reprint}</p>}
+              <p>{thankYou}</p>
             </div>
           );
           break;
